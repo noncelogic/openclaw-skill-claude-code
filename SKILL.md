@@ -19,12 +19,14 @@ node {{skill_dir}}/scripts/run.mjs start \
 ```
 
 **Arguments:**
+
 - `--prompt` (required): The task description for Claude.
 - `--cwd` (required): The working directory for the coding task.
 - `--job-id` (required): A unique identifier for this job.
 - `--model` (optional): Override the model (defaults to SDK default).
 
 **Returns JSON:**
+
 ```json
 { "jobId": "task-137", "pid": 12345, "status": "running" }
 ```
@@ -38,6 +40,7 @@ node {{skill_dir}}/scripts/run.mjs status --job-id task-137
 ```
 
 **Returns JSON:**
+
 ```json
 {
   "jobId": "task-137",
@@ -71,6 +74,7 @@ node {{skill_dir}}/scripts/run.mjs result --job-id task-137
 ```
 
 **Returns JSON:**
+
 ```json
 {
   "jobId": "task-137",

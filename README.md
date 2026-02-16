@@ -9,12 +9,15 @@ This skill treats coding tasks as **persistent, detached jobs** using the `@anth
 ## Why This Exists
 
 ### Decoupled Lifecycle
+
 Agent turns have timeouts (e.g., 900s). Coding tasks take 20+ minutes. This skill starts a Claude agent process, **detaches it** from the agent session, and returns a `jobId`. The agent checks back later.
 
 ### Restart Survival
+
 If you restart OpenClaw (maintenance, crash, update), child processes usually get killed. This skill spawns processes in a separate process group with PID tracking on disk. On reboot, it **re-acquires running jobs** instead of losing them.
 
 ### Rate Limit Intelligence
+
 Generic wrappers treat any pause as a hang. This skill distinguishes between "Claude is thinking" and "API 429/503", bubbling precise status to the orchestrator.
 
 ## Architecture
@@ -101,11 +104,11 @@ openclaw-skill-claude-code/
 
 ## Configuration
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `ANTHROPIC_API_KEY` | Yes | — | Claude API key |
-| `CLAUDE_SKILL_JOBS_DIR` | No | `<skill-dir>/jobs` | Directory for job state |
-| `CLAUDE_SKILL_MODEL` | No | SDK default | Override the model |
+| Variable                | Required | Default            | Description             |
+| ----------------------- | -------- | ------------------ | ----------------------- |
+| `ANTHROPIC_API_KEY`     | Yes      | —                  | Claude API key          |
+| `CLAUDE_SKILL_JOBS_DIR` | No       | `<skill-dir>/jobs` | Directory for job state |
+| `CLAUDE_SKILL_MODEL`    | No       | SDK default        | Override the model      |
 
 ## How It Works
 

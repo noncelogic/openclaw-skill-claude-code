@@ -9,9 +9,9 @@ Thank you for your interest in contributing! We want to make this skill the gold
 3.  **Branch**: Create a feature branch (\`feat/my-feature\`).
 4.  **Code**: Implement your changes.
 5.  **Commit**: Use [Conventional Commits](https://www.conventionalcommits.org/).
-    *   \`feat: add timeout handling\`
-    *   \`fix: correct pid tracking\`
-    *   \`docs: update readme\`
+    - \`feat: add timeout handling\`
+    - \`fix: correct pid tracking\`
+    - \`docs: update readme\`
 6.  **Push & PR**: Push your branch and open a Pull Request.
 
 ## Commits
@@ -19,6 +19,7 @@ Thank you for your interest in contributing! We want to make this skill the gold
 We enforce Conventional Commits via \`commitlint\`. This enables automated semantic versioning and changelog generation.
 
 Types:
+
 - \`feat\`: A new feature
 - \`fix\`: A bug fix
 - \`docs\`: Documentation only changes
@@ -31,5 +32,6 @@ Types:
 ## Release Process
 
 Releases are automated via GitHub Actions and \`semantic-release\`.
+
 - Merging to \`main\` triggers a release.
 - Version number is determined by commit types (fix=patch, feat=minor, BREAKING CHANGE=major).

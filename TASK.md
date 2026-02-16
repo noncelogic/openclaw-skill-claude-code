@@ -1,6 +1,7 @@
 # TASK: Build Resilient Claude Code Skill for OpenClaw (#1)
 
 ## Context
+
 This is an OpenClaw skill that wraps the `@anthropic-ai/claude-agent-sdk` (the official Claude Agent SDK) to run coding tasks as persistent, detached jobs. The current method (`exec claude --dangerously-skip-permissions`) is fragile — jobs die on gateway restart, timeouts, or API hangs.
 
 ## Architecture
@@ -25,21 +26,21 @@ This is an OpenClaw skill that wraps the `@anthropic-ai/claude-agent-sdk` (the o
 The official SDK is `@anthropic-ai/claude-agent-sdk` (v0.2.42). TypeScript usage:
 
 ```typescript
-import { query } from "@anthropic-ai/claude-agent-sdk";
+import { query } from '@anthropic-ai/claude-agent-sdk';
 
 for await (const message of query({
-  prompt: "Fix the bug in auth.py",
+  prompt: 'Fix the bug in auth.py',
   options: {
-    allowedTools: ["Read", "Edit", "Bash", "Glob", "Grep"],
-    permissionMode: "acceptEdits", // Auto-approve file edits
-  }
+    allowedTools: ['Read', 'Edit', 'Bash', 'Glob', 'Grep'],
+    permissionMode: 'acceptEdits', // Auto-approve file edits
+  },
 })) {
-  if (message.type === "assistant" && message.message?.content) {
+  if (message.type === 'assistant' && message.message?.content) {
     for (const block of message.message.content) {
-      if ("text" in block) console.log(block.text);
-      else if ("name" in block) console.log(`Tool: ${block.name}`);
+      if ('text' in block) console.log(block.text);
+      else if ('name' in block) console.log(`Tool: ${block.name}`);
     }
-  } else if (message.type === "result") {
+  } else if (message.type === 'result') {
     console.log(`Done: ${message.subtype}`);
   }
 }
@@ -52,11 +53,14 @@ Available tools: `Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`, `WebSearch`, `
 ## Implementation
 
 ### 1. Package Setup
+
 Create `package.json` with dependencies:
+
 - `@anthropic-ai/claude-agent-sdk`
 - No other runtime deps needed
 
 ### 2. Job Manager (`scripts/job-manager.mjs`)
+
 Core module that manages job lifecycle:
 
 ```javascript
@@ -69,6 +73,7 @@ Core module that manages job lifecycle:
 ```
 
 **State directory**: `jobs/<jobId>/`
+
 - `meta.json`: `{ jobId, pid, status, prompt, cwd, startedAt, endedAt, error }`
 - `output.log`: Streaming text output from the agent
 - `result.json`: Final result text (written on completion)
@@ -78,6 +83,7 @@ Core module that manages job lifecycle:
 **PID tracking**: On startup, `status()` checks if the PID in `meta.json` is still alive (`process.kill(pid, 0)`). If the process died without updating status, mark as `failed`.
 
 ### 3. Worker (`scripts/worker.mjs`)
+
 Runs in a detached process. Receives `jobId` as argv:
 
 1. Read `jobs/<jobId>/meta.json` for prompt and cwd
@@ -91,6 +97,7 @@ Runs in a detached process. Receives `jobId` as argv:
 **Rate limit detection**: Watch for 429/503 patterns in error messages. Set a `rateLimited` flag in `meta.json` so the orchestrator knows it's not a hang.
 
 ### 4. CLI Entry Points (`scripts/run.mjs`)
+
 Simple CLI wrappers for the job manager:
 
 ```bash
@@ -116,40 +123,47 @@ node scripts/run.mjs kill --job-id my-job
 Return JSON to stdout for structured output.
 
 ### 5. SKILL.md
+
 Update the skill instructions to use the new scripts instead of raw `exec claude`:
 
 ```markdown
 ## Starting a coding task
+
 Use `exec` to run:
 \`\`\`bash
 node /path/to/skill/scripts/run.mjs start \
-  --prompt "Read TASK.md and implement. Run tests." \
-  --cwd /path/to/project \
-  --job-id task-137
+ --prompt "Read TASK.md and implement. Run tests." \
+ --cwd /path/to/project \
+ --job-id task-137
 \`\`\`
 
 ## Checking status
+
 \`\`\`bash
 node /path/to/skill/scripts/run.mjs status --job-id task-137
 \`\`\`
 
 ## Getting results
+
 \`\`\`bash
 node /path/to/skill/scripts/run.mjs result --job-id task-137
 \`\`\`
 ```
 
 ### 6. README.md
+
 Update with architecture diagram, usage examples, and configuration.
 
 ## Configuration
 
 The skill reads these env vars:
+
 - `ANTHROPIC_API_KEY` — required (Claude API key)
 - `CLAUDE_SKILL_JOBS_DIR` — optional, defaults to `<skill-dir>/jobs`
 - `CLAUDE_SKILL_MODEL` — optional, defaults to SDK default
 
 ## File Structure
+
 ```
 openclaw-skill-claude-code/
 ├── SKILL.md              # OpenClaw skill instructions
@@ -167,6 +181,7 @@ openclaw-skill-claude-code/
 ```
 
 ## Verification
+
 - `npm install` succeeds
 - `node scripts/run.mjs start --prompt "What files are here?" --cwd . --job-id test-1` starts a job
 - `node scripts/run.mjs status --job-id test-1` shows status
@@ -175,4 +190,5 @@ openclaw-skill-claude-code/
 - Handles missing ANTHROPIC_API_KEY gracefully (clear error message)
 
 ## Branch
+
 `feat/1-resilient-job-manager`
