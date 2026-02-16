@@ -1,0 +1,12 @@
+{
+  "name": "openclaw-skill-claude-code",
+  "version": "1.0.0",
+  "description": "Resilient Claude Code skill for OpenClaw — persistent, detached coding jobs",
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/run.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.2.42"
+  }
+}
