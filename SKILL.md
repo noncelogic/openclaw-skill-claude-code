@@ -100,7 +100,8 @@ node {{skill_dir}}/scripts/run.mjs kill --job-id task-137
 - **Poll status**: After starting a job, check status periodically. Jobs can take 5-30 minutes.
 - **Check logs on failure**: If status is `failed`, read logs to understand what went wrong.
 - **Rate limits are normal**: If `rateLimited` is true, the SDK is handling retries automatically.
-- **Verification**: Include "Run tests" in your prompt to have Claude verify its own changes.
+- **Verification (Mandatory)**: Always include "Run npm run lint and npm test to verify" in your prompt. The repo enforces CI checks; unverified code will fail to commit.
+- **Conventional Commits**: Ensure the agent knows to use `feat:`, `fix:`, `chore:` prefixes, or the commit hook will reject it.
 
 ## Environment
 
