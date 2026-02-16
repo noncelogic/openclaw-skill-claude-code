@@ -41,14 +41,18 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # NPM_TOKEN not needed if using Trusted Publishing (OIDC)
+          # but we keep it as fallback if OIDC fails or isn't set up.
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
