@@ -63,7 +63,7 @@ export async function start(jobId, prompt, cwd, options = {}) {
   await writeJson(metaPath(jobId), meta);
   await writeFile(outputPath(jobId), '');
 
-  const workerPath = join(__dirname, 'worker.mjs');
+  const workerPath = join(__dirname, 'cli-worker.mjs');
   const child = spawn('node', [workerPath, jobId], {
     detached: true,
     stdio: 'ignore',
